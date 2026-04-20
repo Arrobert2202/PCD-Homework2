@@ -81,12 +81,12 @@ gcloud pubsub subscriptions create $env:PUBSUB_SUBSCRIPTION `
 echo "$env:GATEWAY_URL/api/analytics/top-movies"
 
 # Build and push the service image
-gcloud builds submit $env:SERVICE_SOURCE --tag=$env:REGION-docker.pkg.dev/$env:PROJECT_ID/$env:ARTIFACT_REPO/$env:SERVICE_NAME:$env:IMAGE_TAG
+gcloud builds submit $env:SERVICE_SOURCE --tag=$env:REGION-docker.pkg.dev/$env:PROJECT_ID/$env:ARTIFACT_REPO/${env:SERVICE_NAME}:$env:IMAGE_TAG
 
 # Deploy the service to Cloud Run
 # WE ASSUME YOU ALREADY DEPLOYED YOUR MONGODB
 gcloud run deploy $env:SERVICE_NAME `
-    --image=$env:REGION-docker.pkg.dev/$env:PROJECT_ID/$env:ARTIFACT_REPO/$env:SERVICE_NAME:$env:IMAGE_TAG `
+    --image=$env:REGION-docker.pkg.dev/$env:PROJECT_ID/$env:ARTIFACT_REPO/${env:SERVICE_NAME}:$env:IMAGE_TAG `
     --region=$env:REGION `
     --platform=managed `
     --allow-unauthenticated `

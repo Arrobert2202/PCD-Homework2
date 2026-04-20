@@ -30,6 +30,11 @@ gcloud run services delete $env:GATEWAY_NAME `
 gcloud artifacts repositories delete $env:ARTIFACT_REPO `
     --location=$env:REGION `
     --quiet
+	
+# Delete the repo for the cloud function
+gcloud artifacts repositories delete gcf-artifacts `
+    --location=$env:REGION `
+    --quiet
 
 # Delete Firestore database
 gcloud firestore databases delete `
