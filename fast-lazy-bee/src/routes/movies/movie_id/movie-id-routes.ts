@@ -17,6 +17,13 @@ import {
 import { addLinksToResource } from '../../../utils/hal-utils';
 import { acceptsHal, registerEndpointRoutes } from '../../../utils/routing-utils';
 
+// At the top of the file, with other imports:
+import { PubSub } from '@google-cloud/pubsub';
+ 
+// Module-level client, reused across requests
+const pubsub = new PubSub();
+const PUBSUB_TOPIC = process.env.PUBSUB_TOPIC;
+
 const endpoint = API_ENDPOINTS.MOVIE;
 const tags: RouteTags[] = [RouteTags.MOVIE] as const;
 
@@ -25,10 +32,25 @@ const routes: RouteOptions[] = [
     method: [HttpMethods.GET, HttpMethods.HEAD],
     url: endpoint,
     schema: { ...FetchMovieSchema, tags: [...tags, RouteTags.CACHE] },
+    // The handler:
     handler: async function fetchMovie(request, reply) {
       const params = request.params as MovieIdObjectSchemaType;
       const movie = (await this.dataStore.fetchMovie(params.movie_id)) as MovieSchemaType;
-
+    
+      // Publish "movie_viewed" event to Pub/Sub (fire-and-forget, don't block the response)
+      if (PUBSUB_TOPIC) {
+        const event = {
+          event: 'movie_viewed',
+          movieId: params.movie_id,
+          movieTitle: movie.title,
+        };
+    
+        pubsub
+          .topic(PUBSUB_TOPIC)
+          .publishMessage({ data: Buffer.from(JSON.stringify(event)) })
+          .catch((err) => request.log.error({ err }, 'Failed to publish movie_viewed event'));
+      }
+    
       if (acceptsHal(request)) {
         const halMovie = addLinksToResource<typeof MovieSchema>(request, movie);
         reply

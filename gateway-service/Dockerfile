@@ -1,9 +1,9 @@
-FROM node:20-Slim AS builder
+FROM node:25-bookworm-slim AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-FROM node:20-Slim
+FROM node:25-bookworm-slim
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY server.js .

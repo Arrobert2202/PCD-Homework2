@@ -12,7 +12,11 @@ app.use(express.json());
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const db = new Firestore(); 
+const db = new Firestore({
+  databaseId: process.env.FIRESTORE_DB_NAME || '(default)',
+});
+
+const STATS_COLLECTION = process.env.STATS_COLLECTION || 'movie-stats';
 
 const broadcast = (data) => {
   wss.clients.forEach((client) => {
@@ -43,14 +47,12 @@ app.post('/events/notify', (req, res) => {
   res.status(200).send('Event broadcasted to dashboard');
 });
 
-app.get('/api/analytics/top-resources', async (req, res) => {
+app.get('/api/analytics/top-movies', async (req, res) => {
   try {
-    const statsRef = db.collection('resource_stats');
-    const snapshot = await statsRef.orderBy('views', 'desc').limit(10).get();
-    
-    if (snapshot.empty) {
-      return res.json([]);
-    }
+    const snapshot = await db.collection('movie-stats')
+      .orderBy('viewCount', 'desc')
+      .limit(10)
+      .get();
 
     const results = [];
     snapshot.forEach(doc => {
