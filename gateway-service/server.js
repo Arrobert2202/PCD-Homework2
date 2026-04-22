@@ -4,10 +4,13 @@ const http = require('http');
 const WebSocket = require('ws');
 const cors = require('cors');
 const { Firestore } = require('@google-cloud/firestore');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -66,7 +69,12 @@ app.get('/api/analytics/top-movies', async (req, res) => {
   }
 });
 
+app.get(/(.*)/, (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/events')) return next();
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0',() => {
   console.log(`WebSocket Gateway is live on port ${PORT}`);
 });

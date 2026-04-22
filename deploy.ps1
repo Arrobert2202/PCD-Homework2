@@ -27,6 +27,20 @@ gcloud artifacts repositories create $env:ARTIFACT_REPO `
     --repository-format=docker `
     --location=$env:REGION
 
+# Build and inject React Frontend
+
+echo "Building React Frontend..."
+
+cd $env:FRONTEND_SOURCE
+npm install
+npm run build
+cd ..
+
+echo "Copying frontend build to Gateway public folder..."
+rm -Recurse -Force "$env:GATEWAY_SOURCE\public" -ErrorAction SilentlyContinue
+mkdir "$env:GATEWAY_SOURCE\public" | Out-Null
+cp -Recurse "$env:FRONTEND_SOURCE\build\*" "$env:GATEWAY_SOURCE\public"
+
 # Build and push the gateway image
 gcloud builds submit $env:GATEWAY_SOURCE --tag=$env:GATEWAY_IMAGE
 
@@ -78,7 +92,8 @@ gcloud pubsub subscriptions create $env:PUBSUB_SUBSCRIPTION `
     --topic=$env:PUBSUB_TOPIC `
     --push-endpoint=$env:FUNCTION_URL
 	
-echo "$env:GATEWAY_URL/api/analytics/top-movies"
+echo "Dashboard is live at: $env:GATEWAY_URL"
+echo "API Top Movies: $env:GATEWAY_URL/api/analytics/top-movies"
 
 # Build and push the service image
 gcloud builds submit $env:SERVICE_SOURCE --tag=$env:REGION-docker.pkg.dev/$env:PROJECT_ID/$env:ARTIFACT_REPO/${env:SERVICE_NAME}:$env:IMAGE_TAG
