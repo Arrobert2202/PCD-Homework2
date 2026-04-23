@@ -16,7 +16,7 @@ SERVICE_SOURCE="./fast-lazy-bee"
 FRONTEND_SOURCE="./frontend-app"
 ARTIFACT_REPO="myrepo"
 IMAGE_TAG="v1"
-MONGO_URL="mongodb+srv://pcdlab5:pcdlab5@pcd-lab5.7i7t3yy.mongodb.net/sample_mflix"
+MONGO_URL=""
 PROJECT_ID=$(gcloud config get-value project)
 
 # Full image path in Artifact Registry
