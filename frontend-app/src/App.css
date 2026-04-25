@@ -1,96 +1,140 @@
 :root {
-  --bg-color: #f8f9fa;
-  --card-bg: #ffffff;
-  --text-main: #202124;
-  --text-muted: #5f6368;
-  --accent-blue: #1a73e8;
-  --success-green: #0f9d58;
-  --border-color: #dadce0;
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface-2: #22263a;
+  --border: #2e3250;
+  --text: #e8eaf0;
+  --text-muted: #7b82a8;
+  --accent: #6c8ef5;
+  --accent-dim: #1e2a52;
+  --green: #3ecf8e;
+  --green-dim: #0d2e20;
+  --red: #f56565;
+  --red-dim: #2e1010;
+  --yellow: #f6c90e;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-main);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
 }
 
 .dashboard-container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem 2rem 3rem;
 }
 
+/* ── Header ── */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: 1rem;
+  padding: 1.2rem 0 1.2rem;
+  margin-bottom: 1.8rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .header h1 {
   margin: 0;
-  font-size: 1.8rem;
-  color: var(--text-main);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+
+.header h1 span {
+  color: var(--accent);
 }
 
 .status-indicators {
   display: flex;
-  gap: 1rem;
-  font-weight: bold;
+  gap: 0.6rem;
+  align-items: center;
 }
 
-.status-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+/* ── Badges ── */
+.status-badge,
+.user-count,
+.latency-badge {
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
 }
 
 .status-badge.online {
-  background-color: #e6f4ea;
-  color: var(--success-green);
+  background-color: var(--green-dim);
+  color: var(--green);
+  border: 1px solid #1a5c3a;
 }
 
 .status-badge.offline {
-  background-color: #fce8e6;
-  color: #d93025;
+  background-color: var(--red-dim);
+  color: var(--red);
+  border: 1px solid #5c1a1a;
 }
 
 .user-count {
-  padding: 0.5rem 1rem;
-  background-color: #e8f0fe;
-  color: var(--accent-blue);
-  border-radius: 20px;
+  background-color: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid #2a3a7a;
 }
 
+.latency-badge {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  font-weight: 600;
+}
+
+/* ── Grid ── */
 .grid-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
+@media (max-width: 700px) {
+  .grid-layout {
+    grid-template-columns: 1fr;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+}
+
+/* ── Cards ── */
 .card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.4rem;
 }
 
 .card h2 {
-  margin-top: 0;
-  color: var(--text-main);
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 0.5rem;
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
 }
 
 .empty-state {
   color: var(--text-muted);
-  font-style: italic;
+  font-size: 0.88rem;
   text-align: center;
-  padding: 2rem 0;
+  padding: 2.5rem 0;
 }
 
 ul {
@@ -99,66 +143,95 @@ ul {
   margin: 0;
 }
 
-.ranking-item, .event-item {
+/* ── Ranking list ── */
+.ranking-item {
   display: flex;
   align-items: center;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid #f1f3f4;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
 }
 
-.ranking-item:last-child, .event-item:last-child {
+.ranking-item:last-child {
   border-bottom: none;
 }
 
 .rank {
-  font-weight: bold;
+  font-size: 0.75rem;
+  font-weight: 700;
   color: var(--text-muted);
-  width: 30px;
+  width: 24px;
+  text-align: right;
+  flex-shrink: 0;
 }
+
+/* top 3 get a little colour */
+.ranking-item:nth-child(1) .rank { color: var(--yellow); }
+.ranking-item:nth-child(2) .rank { color: #c0c0c0; }
+.ranking-item:nth-child(3) .rank { color: #cd7f32; }
 
 .resource-id {
   flex-grow: 1;
   font-weight: 500;
-  padding-right: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
 }
 
 .views-badge {
-  background-color: var(--accent-blue);
-  color: white;
-  padding: 0.3rem 0.8rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
+  background-color: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid #2a3a7a;
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
+/* ── Event feed ── */
 .event-item {
   display: flex;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.86rem;
   align-items: flex-start;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid #f1f3f4;
+}
+
+.event-item:last-child {
+  border-bottom: none;
 }
 
 .event-item .time {
   color: var(--text-muted);
-  font-size: 0.85rem;
-  min-width: 75px;
+  font-size: 0.78rem;
+  min-width: 68px;
   flex-shrink: 0;
-  padding-top: 2px;
+  padding-top: 1px;
+  font-variant-numeric: tabular-nums;
 }
 
 .event-item .action {
   flex-grow: 1;
-  line-height: 1.4;
+  line-height: 1.45;
+  color: var(--text);
 }
 
-.latency-badge {
-  padding: 0.5rem 1rem;
-  background-color: #f1f3f4;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
+.event-item .action strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Subtle blink on live badge ── */
+@keyframes blink-border {
+  0%, 100% { border-color: #1a5c3a; }
+  50%       { border-color: var(--green); }
+}
+
+.status-badge.online {
+  animation: blink-border 2.5s infinite;
 }

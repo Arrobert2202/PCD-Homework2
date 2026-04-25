@@ -75,7 +75,7 @@ To test the full data flow, eventual consistency, and asynchronous communication
 2. **Generate Events**: Open your API testing tool (e.g., Postman).
    * Create a new `GET` request.
    * Enter the URL of your Fast Lazy Bee service, appending a valid MongoDB movie ID. 
-     *Format:* `https://<URL_FAST_LAZY_BEE>/api/movies/<MOVIE_ID>`
+     *Format:* `https://<URL_FAST_LAZY_BEE>/api/v1/movies/<MOVIE_ID>`
    * Click **Send** to simulate a user accessing a movie.
 3. **Observe the Eventual Consistency**:
    * Watch the Dashboard. After a short network delay (the consistency window), the event will pop up in the **"Live Activity Feed"**, demonstrating real-time WebSocket communication.

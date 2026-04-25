@@ -10,6 +10,7 @@ $env:PUBSUB_TOPIC           = "movie-events"
 $env:PUBSUB_SUBSCRIPTION    = "movie-events-sub"
 $env:GATEWAY_NAME           = "gateway-service"
 $env:GATEWAY_SOURCE         = ".\gateway-service"
+$env:FRONTEND_SOURCE        = ".\frontend-app"
 $env:SERVICE_NAME			= "fast-lazy-bee"
 $env:SERVICE_SOURCE			= ".\fast-lazy-bee"
 $env:ARTIFACT_REPO          = "myrepo"
@@ -62,6 +63,8 @@ $env:GATEWAY_URL = gcloud run services describe $env:GATEWAY_NAME `
 $env:GATEWAY_URL_NOTIFY = "$env:GATEWAY_URL/events/notify"
 
 # Create Firestore database in Native mode
+Write-Host "Creating Firestore database (waiting for any previous deletion to propagate)..."
+Start-Sleep -Seconds 10
 gcloud firestore databases create `
     --database=$env:FIRESTORE_DB_NAME `
     --location=$env:REGION `

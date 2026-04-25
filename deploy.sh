@@ -60,6 +60,8 @@ GATEWAY_URL=$(gcloud run services describe $GATEWAY_NAME \
 GATEWAY_URL_NOTIFY="$GATEWAY_URL/events/notify"
 
 # Create Firestore database in Native mode
+echo "Creating Firestore database (waiting for any previous deletion to propagate)..."
+sleep 10
 gcloud firestore databases create \
     --database=$FIRESTORE_DB_NAME \
     --location=$REGION \

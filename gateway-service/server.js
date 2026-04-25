@@ -9,7 +9,6 @@ const path = require('path');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 const server = http.createServer(app);
@@ -18,8 +17,6 @@ const wss = new WebSocket.Server({ server });
 const db = new Firestore({
   databaseId: process.env.FIRESTORE_DB_NAME || '(default)',
 });
-
-const STATS_COLLECTION = process.env.STATS_COLLECTION || 'movie-stats';
 
 const broadcast = (data) => {
   wss.clients.forEach((client) => {
@@ -30,7 +27,7 @@ const broadcast = (data) => {
 };
 
 wss.on('connection', (ws) => {
-  console.log('New Dashboard client connected');
+  console.log(`client connected (total: ${wss.clients.size})`);
   broadcast({ type: 'USER_COUNT', payload: wss.clients.size });
 
   ws.on('close', () => {
@@ -40,14 +37,17 @@ wss.on('connection', (ws) => {
 
 app.post('/events/notify', (req, res) => {
   const eventData = req.body;
-  
-  if (!eventData) return res.status(400).send('No data received');
-
-  console.log('Broadcasting real-time update:', eventData);
+  if (!eventData) return res.status(400).send('no data');
 
   broadcast({ type: 'REALTIME_EVENT', payload: eventData });
-  
-  res.status(200).send('Event broadcasted to dashboard');
+  res.status(200).send('ok');
+});
+
+app.post('/admin/kill-connections', (req, res) => {
+  const count = wss.clients.size;
+  wss.clients.forEach((client) => client.terminate());
+  console.log(`terminated ${count} connection(s)`);
+  res.status(200).json({ killed: count });
 });
 
 app.get('/api/analytics/top-movies', async (req, res) => {
@@ -58,14 +58,12 @@ app.get('/api/analytics/top-movies', async (req, res) => {
       .get();
 
     const results = [];
-    snapshot.forEach(doc => {
-      results.push({ id: doc.id, ...doc.data() });
-    });
+    snapshot.forEach(doc => results.push({ id: doc.id, ...doc.data() }));
 
     res.json(results);
   } catch (err) {
-    console.error('Firestore Query Error:', err);
-    res.status(500).send('Failed to fetch analytics from Firestore');
+    console.error('firestore error:', err);
+    res.status(500).send('failed to fetch stats');
   }
 });
 
@@ -75,6 +73,6 @@ app.get(/(.*)/, (req, res, next) => {
 });
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, '0.0.0.0',() => {
-  console.log(`WebSocket Gateway is live on port ${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`gateway running on port ${PORT}`);
 });

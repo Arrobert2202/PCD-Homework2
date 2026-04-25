@@ -113,7 +113,7 @@ def pubsub_handler(request):
 
         result = process_event(message_id, data)
         if result.get("status") != "duplicate":
-             notify_gateway(message_id, data)
+            notify_gateway(message_id, data)
 
         logger.info(json.dumps({
             "msg": "Push message handled",
